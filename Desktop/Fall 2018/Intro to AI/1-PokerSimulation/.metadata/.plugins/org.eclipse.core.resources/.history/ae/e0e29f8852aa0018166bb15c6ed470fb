@@ -1,0 +1,23 @@
+package PokerSimulation.main;
+
+public class Card {
+
+	private String suite;
+	private String value;
+	
+	public Card(String suite, String value) {
+		this.suite = suite;
+		this.value = value;
+	}
+	
+	public String get_suite() 
+	{
+		return suite;
+	}
+	
+	public String get_value()
+	{
+		return value;
+	}
+
+}

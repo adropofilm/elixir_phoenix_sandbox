@@ -1,0 +1,32 @@
+package PokerSimulation.main;
+
+public class Simulation {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String Suites[] = {"D", "H", "S", "C"};
+		String Values[] = {"A", "2", "3", "4", "5", "6","7","8","9","10","J","Q","K"};
+		
+		// Initiate 52 card deck:
+		Card deck[] = new Card[52];
+		int card_num = 0;
+		
+		for (int i = 0; i<3; i++) {
+			for (int j=0; j<13; j++) {
+				Card temp_card = new Card(Suites[i], Values[j]);
+				deck[card_num] = temp_card;
+				card_num++;
+			}
+		}
+		
+		//print out values:
+		for (int i = 0; i < deck.length; i++) 
+		{
+			System.out.println(deck[i].get_card());
+		}
+		
+		
+
+	}
+
+}

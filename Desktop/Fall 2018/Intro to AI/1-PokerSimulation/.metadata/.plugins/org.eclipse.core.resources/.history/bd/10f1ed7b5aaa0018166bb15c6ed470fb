@@ -1,0 +1,16 @@
+package PokerSimulation.main;
+
+public class Hand {
+
+	private int Rank;
+	private Card cards[] = new Card[5];
+	
+	/**  
+	 * Chooses (randomly) cards from the community pile.
+	 */
+	public void choose_cards() 
+	{
+		
+	}
+	
+}

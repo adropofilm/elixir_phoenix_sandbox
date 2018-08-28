@@ -1,0 +1,15 @@
+package PokerSimulation.main;
+
+public class Simulation {
+	public void start_game() 
+	{
+		Card first_card = new Card("D", "2");
+		first_card.get_suite();
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Card first_card = Card("D","2");
+	}
+
+}
