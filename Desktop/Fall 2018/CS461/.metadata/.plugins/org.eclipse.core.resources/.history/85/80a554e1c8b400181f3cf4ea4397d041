@@ -1,0 +1,99 @@
+package PokerSimulation.main;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.print.attribute.standard.MediaSize.Other;
+
+public class Player{
+	
+	private Hand hand = new Hand();
+	private double percent_win = 0;
+	private String player_name;
+	private int Rank;
+	private double games_played;
+	private double games_won;
+	
+	// Accessors and Mutators:
+	
+	public Player(String player) 
+	{
+		this.player_name = player;
+	}
+	
+	
+	public String get_name() 
+	{
+	
+		return this.player_name;
+		
+	}
+	
+	public double get_games_played() {
+		return this.games_played;
+	}
+	
+	public double get_games_won() {
+		return this.games_won;
+	}
+	
+	public int get_rank() {
+		this.hand.calculate_rank();
+		this.Rank = this.hand.get_rank();
+		return this.Rank;
+	}
+	
+	public Hand get_hand()
+	{
+		return this.hand;
+	}
+	
+	public double get_win() 
+	{
+		this.percent_win = this.games_won/this.games_played;
+		this.percent_win *= 100;
+		return this.percent_win;
+	}
+	
+	public void set_name(String name) 
+	{
+		this.player_name = name;
+	}
+	
+	public void set_hand(Hand hand)
+	{
+		this.hand = hand;
+	}
+	
+	public void set_win(double win_percent)
+	{
+		this.percent_win = win_percent;
+	}
+	
+	public void set_games_played(double games_played) 
+	{
+		this.games_played = games_played;
+	}
+	
+	public void set_games_won(double games_won) 
+	{
+		this.games_played = games_won;
+	}
+	
+	public void increment_games_played()
+	{
+		this.games_played++;
+	}
+	
+	public void increment_games_won() 
+	{
+		this.games_won++;
+	}
+
+	
+	
+
+	
+}

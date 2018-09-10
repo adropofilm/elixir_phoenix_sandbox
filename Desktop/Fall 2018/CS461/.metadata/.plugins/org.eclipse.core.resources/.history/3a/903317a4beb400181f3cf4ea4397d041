@@ -1,0 +1,79 @@
+package PokerSimulation.main;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.print.attribute.standard.MediaSize.Other;
+
+public class Player implements Comparable<Player>{
+	
+	private Hand hand = new Hand();
+	private float percent_win = 0;
+	private String player_name;
+	private int Rank;
+	
+	// Accessors and Mutators:
+	
+	public Player(String player) 
+	{
+		this.player_name = player;
+	}
+	
+	public float get_win_percent() 
+	{
+		return this.percent_win;
+	}
+	
+	public String get_name() 
+	{
+	
+		return this.player_name;
+		
+	}
+	
+	public int get_rank() {
+		this.hand.calculate_rank();
+		this.Rank = this.hand.get_rank();
+		return this.Rank;
+	}
+	
+	public Hand get_hand()
+	{
+		return this.hand;
+	}
+	
+	public void set_name(String name) 
+	{
+		this.player_name = name;
+	}
+	
+	public void set_hand(Hand hand)
+	{
+		this.hand = hand;
+	}
+	
+	public void set_win(float win_percent)
+	{
+		this.percent_win = win_percent;
+	}
+
+	@Override
+	public int compareTo(Player o) {
+		// TODO Auto-generated method stub
+		//return (this.Rank - o.Rank);
+		
+		return Integer.compare(this.Rank, o.get_rank());
+	}
+
+	Collections.sort(List<Player>, new Comparator<Player>(){
+	     public int compare(Player o1, Player o2){
+	         if(o1.get_rank() == o2.get_rank())
+	             return 0;
+	         return o1.get_rank() < o2.get_rank() ? -1 : 1;
+	     }
+	});
+
+	
+}

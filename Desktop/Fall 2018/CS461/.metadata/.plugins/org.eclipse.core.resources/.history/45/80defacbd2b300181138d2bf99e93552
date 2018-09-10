@@ -1,0 +1,32 @@
+package PokerSimulation.main;
+
+public class Rank {
+	private int rank;
+	private int position;
+	
+
+	// Accessors & Mutators:
+	
+	int get_rank() 
+	{
+		return this.rank;
+	}
+	
+	int get_position()
+	{
+		return this.position;
+	}
+	
+	// MISC:
+	
+	/*- is_straight_flush():
+	    - Check if is_flush(), if true, continue
+	    - check if is_straight(), if true, continue
+*/
+	public boolean is_straight_flush()
+	{
+		return true;
+	}
+	
+	
+}

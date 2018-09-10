@@ -1,0 +1,95 @@
+package PokerSimulation.main;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class Deck {
+	
+	private List<Card> deck = new ArrayList<>();
+	
+	public Deck() 
+	{
+		initiate_deck();
+	}
+	
+	private void initiate_deck() 
+	{
+		String Suites[] = {"D", "H", "S", "C"};
+		String Ranks[] = {"A", "2", "3", "4", "5", "6","7","8","9","10","J","Q","K"};
+		
+		// Initiate 52 card deck:
+		int card_num = 0;
+		
+		for (int i = 0; i<4; i++) {
+			for (int j=0; j<13; j++) {
+				this.deck.add(card_num, new Card(Suites[i], Ranks[j]));
+				card_num++;
+			}
+		}
+	}
+	
+	// TODO add deal_cards(int cards_needed) to deal cards to players and community pile
+	/* this also subtracts cards from deck once complete.
+		- shuffle deck
+		- 
+	*/
+	
+	public List<Card> deal_cards(int cards_needed)
+	{
+		List<Card> dealt = new ArrayList<>();
+		List<Integer> random_nums = new ArrayList<>();
+		
+		for (int i = 0; i < this.get_size() - cards_needed; i++)
+		{
+			random_nums.add(i);
+		}
+		
+		this.shuffle();
+		Collections.shuffle(random_nums);
+		
+		while (dealt.size() < cards_needed)
+		{
+			dealt.add(this.deck.get((int)random_nums.get(0)));
+			this.deck.remove((int)random_nums.get(0));
+			random_nums.remove(0);
+		}
+		
+		return dealt;
+	}
+	
+	public void remove_card(Card remove_card)
+	{
+        Iterator<Card> it = this.deck.iterator();
+        while (it.hasNext()) {
+            if (it.next().equals(remove_card)) {
+            			it.remove();       	
+            }
+        }
+	}
+	
+	public void shuffle() 
+	{
+		Collections.shuffle(this.deck);
+	}
+	
+
+	// Accessors and Mutators:
+	
+	public List<Card> get_deck() 
+	{
+		for (int i = 0; i < this.deck.size(); i++)
+		{
+			System.out.print(this.deck.get(i).get_card() + " ");
+		}
+		return this.deck;
+	}
+	
+	public int get_size()
+	{
+		return this.deck.size();
+	}
+
+}

@@ -1,0 +1,76 @@
+AI Project 1:
+
+- sort_by_suite():
+    
+
+- sort_by_rank():
+
+
+
+- break_tie(): include switch statement
+
+
+
+
+
+- is_straight_flush():
+    - Check if is_flush(), if true, continue
+    - check if is_straight(), if true, continue
+
+- is_four():  // 4 of same rank card
+    - sort_by_rank()
+    - boolean a = h[0].rank() == h[1].rank() &&
+           h[1].rank() == h[2].rank() &&
+           h[2].rank() == h[3].rank() ; // lower 4 cards
+    - Boolean b = a2 = h[1].rank() == h[2].rank() &&
+           h[2].rank() == h[3].rank() &&
+           h[3].rank() == h[4].rank() ; //upper 4 cards
+    - return( a || b)
+
+- full_house():
+    - sort_by_rank()
+    - check for x x x y y:
+        - boolean a = Compare ranks 
+    - Check for  x x y y y:
+        - boolean b = Compare ranks
+    - Return ( a || b )
+
+- is_flush():
+    - Sort cards by suite
+    - If lowest suite == highest suite, hand is flush.
+
+- is_straight():
+    - if (highest card == ace):
+        - check if other cards are:
+            K Q J 10    or
+            2 3 4 5
+    - else:
+        - for (int i = 0; i < 8; i++) // 8 possible other combos
+            if (h[i] == rank[i+1] && h[i+1] == rank[i+2])
+
+- is_three():
+    - sort_by_rank
+    - Follow step 2-4 of is_four() but with upper 3, lower 3 and middle 3.
+
+- is2pair():
+    - if (is_fullhouse || is_three || is_four):
+        return false
+    - sort_by_rank()
+    - boolean a = (h[0] == h[1] & h[3] == h[4])
+    - boolean b = (h[1] == h[2] & h[3] == h[4])
+    - boolean c = (h[0] == h[1] & h[2] == h[3])
+    - return ( a || b || c)
+
+- is1pair():
+    if (is_two() || is_three() || is_fours() || is_full_house() )
+        return false
+    sort_by_rank();
+    a = h[0].rank() == h[1].rank()
+    b = h[1].rank() == h[2].rank()
+    c = h[2].rank() == h[3].rank()
+    d = h[3].rank() == h[4].rank()
+    
+    return( a || b || c || d )
+
+// Otherwise:
+    rank = "high card"

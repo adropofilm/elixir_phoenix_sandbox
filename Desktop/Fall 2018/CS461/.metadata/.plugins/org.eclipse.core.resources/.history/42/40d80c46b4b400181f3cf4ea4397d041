@@ -1,0 +1,968 @@
+package PokerSimulation.main;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.print.attribute.standard.MediaSize.Other;
+
+public class Hand {
+
+	private Integer rank;
+	
+	private Integer position;
+	
+	private List<Card> cards = new ArrayList<>();
+	
+
+	// Accessors and Mutators:
+	
+	public int get_num_cards()
+	{
+		return this.cards.size();
+	}
+	
+	public List<Card> get_hand() 
+	{
+		return this.cards;
+	}
+
+	public void add_card(Card card_to_add)
+	{
+		cards.add(card_to_add);
+	}
+	
+	public Integer get_rank()
+	{
+		return this.rank;
+	}
+	
+	public Integer get_position()
+	{
+		return this.position;
+	}
+	
+	
+	
+	public void set_hand(List<Card> hand)
+	{
+		this.cards = hand;
+		this.calculate_rank();
+	}
+	
+	
+	/**  
+	 * Chooses (randomly) cards from the community pile:
+	 */
+
+	public void choose_cards(List<Card> community_cards) 
+	
+	{
+		int cards_chosen = 0;
+		Collections.shuffle(community_cards);
+		
+		while (cards_chosen < 2)
+		{
+			this.cards.add(community_cards.get(cards_chosen)); 
+			cards_chosen++;
+		}
+		
+	}
+	
+	// Hand ranking logic: 
+	
+	public void calculate_rank()
+	{
+		if (cards.size() == 5)
+		{
+			if(this.is_straight_flush())
+			{
+				this.rank = 9;
+			}
+			
+			else if (this.is_four())
+			{
+				this.rank = 8;
+			}
+			else if(this.is_full_house())
+			{
+				this.rank = 7;
+			}
+			else if(this.is_flush()) 
+			{
+				this.rank = 6;
+			}
+			else if(this.is_straight())
+			{
+				this.rank = 5;
+			}
+			else if(this.is_three())
+			{
+				this.rank = 4;
+			}
+			else if(this.is_two_pair())
+			{
+				this.rank = 3;
+			}
+			else if(this.is_one_pair())
+			{
+				this.rank = 2;
+			}
+			else 
+			{
+				this.rank = 1;
+			}
+			
+		}
+	}
+	
+	
+	public void sort_by_suite()
+	{
+		// TODO simplify this function and sort by rank:
+		
+		// Selection sort:
+		int min, i, j;
+		
+		for (i = 0; i < this.cards.size(); i++) 
+		{
+			min = i;
+			for ( j = i + 1; j < this.cards.size(); j++)
+			{
+				if(this.cards.get(j).get_suite() < this.cards.get(min).get_suite())
+				{
+					min = j;
+				}
+			}
+			
+			// swap values:
+			Card temp = new Card(this.cards.get(i).get_suite(),this.cards.get(i).get_rank());
+			
+			Card switch_a = this.cards.get(i);
+			Card switch_b = this.cards.get(min);
+			
+			switch_a.set_rank(switch_b.get_rank());
+			switch_a.set_suite(switch_b.get_suite());
+		
+			switch_b.set_rank(temp.get_rank());
+			switch_b.set_suite(temp.get_suite());	
+		}
+	}
+	
+	public void sort_by_rank()
+	{
+		// Selection sort:
+		int min, i, j;
+		
+		for (i = 0; i < this.cards.size(); i++) 
+		{
+			min = i;
+			for ( j = i + 1; j < this.cards.size(); j++)
+			{
+				if(this.cards.get(j).get_rank() < this.cards.get(min).get_rank())
+				{
+					min = j;
+				}
+			}
+			
+			// swap values:
+			Card temp = new Card(this.cards.get(i).get_suite(),this.cards.get(i).get_rank());
+			
+			Card switch_a = this.cards.get(i);
+			Card switch_b = this.cards.get(min);
+			
+			switch_a.set_rank(switch_b.get_rank());
+			switch_a.set_suite(switch_b.get_suite());
+		
+			switch_b.set_rank(temp.get_rank());
+			switch_b.set_suite(temp.get_suite());	
+		}
+	}
+	
+	
+
+	// Rank comparison methods:
+	
+
+	/*
+	 * - if Highest card is A, check if the others are KQJ10 or 1234. 
+	 * - Else, check for the 8 other possible cominations
+	 * 
+	 */
+	
+	public boolean is_straight_flush() 
+	{
+		
+		return(this.is_straight() && this.is_flush());
+		
+	}
+	
+	
+	public boolean is_four()
+	{
+		this.sort_by_rank();
+		// check for x x x x y
+		boolean a = this.cards.get(0).get_rank() == this.cards.get(1).get_rank() &&
+				this.cards.get(1).get_rank() == this.cards.get(2).get_rank() && 
+				this.cards.get(2).get_rank() == this.cards.get(3).get_rank() && 
+				this.cards.get(4).get_rank() != this.cards.get(0).get_rank();
+		
+		// check for x y y y y 
+		boolean b = this.cards.get(0).get_rank() != this.cards.get(1).get_rank() && 
+				this.cards.get(1).get_rank() == this.cards.get(2).get_rank() &&
+				this.cards.get(2).get_rank() == this.cards.get(3).get_rank() && 
+				this.cards.get(3).get_rank() == this.cards.get(4).get_rank();
+
+		if(a == true)
+		{
+			this.position = 1;
+			return true;
+		}
+		
+		else if (b == true)
+		{
+			this.position = 2;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public boolean is_full_house()
+	{
+		
+		this.sort_by_rank();
+		
+		//check for x x x y y:
+		boolean a = this.cards.get(0).get_rank() == this.cards.get(1).get_rank() &&
+				this.cards.get(1).get_rank() == this.cards.get(2).get_rank() && 
+				this.cards.get(2).get_rank() != this.cards.get(3).get_rank() && 
+				this.cards.get(3).get_rank() == this.cards.get(4).get_rank();
+		
+		
+		// check for  x x y y y:
+		boolean b = this.cards.get(0).get_rank() == this.cards.get(1).get_rank() &&
+				this.cards.get(1).get_rank() != this.cards.get(2).get_rank() && 
+				this.cards.get(2).get_rank() == this.cards.get(3).get_rank() && 
+				this.cards.get(3).get_rank() == this.cards.get(4).get_rank();
+		
+		if(a == true)
+		{
+			this.position = 1;
+			return true;
+		}
+		
+		else if (b == true)
+		{
+			this.position = 2;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public boolean is_flush()
+	{
+		this.sort_by_suite();
+		return(this.cards.get(0).get_suite() == this.cards.get(4).get_suite());
+	}
+	
+	public boolean is_straight()
+	{
+		if(this.cards.get(4).get_rank() == 12)
+		{
+			boolean case_a = this.cards.get(3).get_rank() == 11 && this.cards.get(2).get_rank() == 10 && this.cards.get(1).get_rank() == 9 
+					&& this.cards.get(0).get_rank() == 8;
+			boolean case_b = this.cards.get(3).get_rank() == 3 && this.cards.get(2).get_rank() == 2 && this.cards.get(1).get_rank() == 1 
+					&& this.cards.get(0).get_rank() == 0;
+			return ( case_a || case_b);
+		}
+		else
+		{
+			Integer[] ranks = {0,1,2,3,4,5,6,7,8,9,10,11,12};
+
+			for(int i = 0; i < 8; i++)
+			{
+				if(this.cards.get(0).get_rank() == ranks[i] && this.cards.get(1).get_rank() == ranks[i+1] && this.cards.get(2).get_rank() == ranks[i+2]
+						&& this.cards.get(3).get_rank() == ranks[i+3] && this.cards.get(4).get_rank() == ranks[i+4])
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	
+	public boolean is_three()
+	{
+		this.sort_by_rank();
+		// check for x x x y z
+		boolean a = this.cards.get(0).get_rank() == this.cards.get(1).get_rank() &&
+				this.cards.get(1).get_rank() == this.cards.get(2).get_rank() && 
+				this.cards.get(2).get_rank() != this.cards.get(3).get_rank() && 
+				this.cards.get(3).get_rank() != this.cards.get(4).get_rank() &&
+				this.cards.get(4).get_rank() != this.cards.get(2).get_rank();
+		
+		// check for z y x x x
+		boolean b = this.cards.get(0).get_rank() != this.cards.get(1).get_rank() && 
+				this.cards.get(1).get_rank() != this.cards.get(2).get_rank() &&
+				this.cards.get(0).get_rank() != this.cards.get(2).get_rank() && 
+				this.cards.get(2).get_rank() == this.cards.get(3).get_rank() &&
+				this.cards.get(3).get_rank() == this.cards.get(4).get_rank(); 
+
+		// check for z x x x y
+		boolean c =  this.cards.get(0).get_rank() != this.cards.get(1).get_rank() &&
+				this.cards.get(1).get_rank() == this.cards.get(2).get_rank() &&
+				this.cards.get(2).get_rank() == this.cards.get(3).get_rank() && 
+				this.cards.get(3).get_rank() != this.cards.get(4).get_rank() &&
+				this.cards.get(0).get_rank() != this.cards.get(4).get_rank();
+	
+		if(a == true)
+		{
+			this.position = 1;
+			return true;
+		}
+		
+		else if (b == true)
+		{
+			this.position = 2;
+			return true;
+		}
+		else if( c == true)
+		{
+			this.position = 3;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public boolean is_two_pair()
+	{
+		
+		if (this.is_full_house() || this.is_three() || this.is_four())
+		{
+			return false;
+		}
+		
+		this.sort_by_rank();
+		
+		// check for x x y y z
+		boolean a = this.cards.get(0).get_rank() == this.cards.get(1).get_rank() &&
+				this.cards.get(1).get_rank() != this.cards.get(2).get_rank() &&
+				this.cards.get(2).get_rank() == this.cards.get(3).get_rank() && 
+				this.cards.get(3).get_rank() != this.cards.get(4).get_rank() &&
+				this.cards.get(0).get_rank() != this.cards.get(4).get_rank();
+		
+		// check for x x y z z
+		boolean b = this.cards.get(0).get_rank() == this.cards.get(1).get_rank() &&
+				this.cards.get(1).get_rank() != this.cards.get(2).get_rank() &&
+				this.cards.get(2).get_rank() != this.cards.get(3).get_rank() && 
+				this.cards.get(3).get_rank() == this.cards.get(4).get_rank() &&
+				this.cards.get(4).get_rank() != this.cards.get(0).get_rank();
+
+		// check for y x x z z
+		boolean c = this.cards.get(0).get_rank() != this.cards.get(1).get_rank() &&
+				this.cards.get(1).get_rank() == this.cards.get(2).get_rank() &&
+				this.cards.get(2).get_rank() != this.cards.get(3).get_rank() && 
+				this.cards.get(3).get_rank() == this.cards.get(4).get_rank() &&
+				this.cards.get(4).get_rank() != this.cards.get(0).get_rank();
+		
+		if(a == true)
+		{
+			this.position = 1;
+			return true;
+		}
+		
+		else if (b == true)
+		{
+			this.position = 2;
+			return true;
+		}
+		else if( c == true)
+		{
+			this.position = 3;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+		
+	}
+	
+	public boolean is_one_pair()
+	{
+		if (this.is_two_pair() || this.is_four() || this.is_full_house())
+		{
+			return false;
+		}
+		else
+		{
+			// check for w w x y z
+			boolean a = this.cards.get(0).get_rank() == this.cards.get(1).get_rank() &&
+					this.cards.get(1).get_rank() != this.cards.get(2).get_rank() &&
+					this.cards.get(2).get_rank() != this.cards.get(3).get_rank() && 
+					this.cards.get(3).get_rank() != this.cards.get(4).get_rank() &&
+					this.cards.get(4).get_rank() != this.cards.get(2).get_rank() &&
+					this.cards.get(4).get_rank() != this.cards.get(0).get_rank();
+			
+			// check for w x x y z
+			boolean b = this.cards.get(0).get_rank() != this.cards.get(1).get_rank() &&
+					this.cards.get(1).get_rank() == this.cards.get(2).get_rank() &&
+					this.cards.get(2).get_rank() != this.cards.get(3).get_rank() && 
+					this.cards.get(3).get_rank() != this.cards.get(4).get_rank() &&
+					this.cards.get(4).get_rank() != this.cards.get(2).get_rank() &&
+					this.cards.get(4).get_rank() != this.cards.get(0).get_rank();
+
+			// check for w x y y z
+			boolean c = this.cards.get(0).get_rank() != this.cards.get(1).get_rank() &&
+					this.cards.get(1).get_rank() != this.cards.get(2).get_rank() &&
+					this.cards.get(2).get_rank() == this.cards.get(3).get_rank() && 
+					this.cards.get(3).get_rank() != this.cards.get(4).get_rank() &&
+					this.cards.get(4).get_rank() != this.cards.get(1).get_rank() &&
+					this.cards.get(4).get_rank() != this.cards.get(0).get_rank();
+			
+			// check for w x y z z 
+			boolean d = this.cards.get(0).get_rank() != this.cards.get(1).get_rank() &&
+					this.cards.get(1).get_rank() != this.cards.get(2).get_rank() &&
+					this.cards.get(2).get_rank() != this.cards.get(3).get_rank() && 
+					this.cards.get(3).get_rank() == this.cards.get(4).get_rank() &&
+					this.cards.get(4).get_rank() != this.cards.get(2).get_rank() &&
+					this.cards.get(4).get_rank() != this.cards.get(0).get_rank() &&
+					this.cards.get(4).get_rank() != this.cards.get(1).get_rank();		
+			
+			if(a == true)
+			{
+				this.position = 1;
+				return true;
+			}
+			
+			else if (b == true)
+			{
+				this.position = 2;
+				return true;
+			}
+			else if( c == true)
+			{
+				this.position = 3;
+				return true;
+			}
+			else if( d == true)
+			{
+				this.position = 4;
+				return true;		
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	
+	
+	
+	// Compare Hands:	
+	
+	public Integer break_tie(Hand other_hand)
+	{
+		// TODO complete function:
+		
+		Integer this_pos = this.get_position();
+		Integer other_pos = other_hand.get_position();
+		
+		Integer winner = null;
+		
+		switch(other_hand.get_rank())
+		{
+			case 1: rank = 9;
+				if(this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank())
+				{
+					winner = 2;
+				}
+				else if(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank())
+				{
+					winner = 1;
+				}
+				else
+				{
+					winner = 3;
+				}
+				break;
+				
+			case 2: rank = 8;
+				if(this_pos == 1 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+								this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+				}
+				else if(this_pos == 1 && other_pos == 2)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+								this.cards.get(0).get_rank() < other_hand.get_hand().get(1).get_rank());	
+				}
+				else if(this_pos == 2 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+								this.cards.get(1).get_rank() < other_hand.get_hand().get(0).get_rank());	
+				}
+				else // this.pos == 2 && other.pos == 2 
+				{
+					winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+							this.cards.get(1).get_rank() < other_hand.get_hand().get(1).get_rank());
+				}
+				break;
+				
+			case 3: rank = 7;
+				if(this_pos == 1 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+								this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+				}
+				else if(this_pos == 1 && other_pos == 2)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+								this.cards.get(0).get_rank() < other_hand.get_hand().get(2).get_rank());		
+				}
+				else if(this_pos == 2 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+								this.cards.get(2).get_rank() < other_hand.get_hand().get(0).get_rank());	
+				}
+				else // this.pos == 2 && other.pos == 2 
+				{
+					winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+							this.cards.get(2).get_rank() < other_hand.get_hand().get(2).get_rank());
+				}
+	
+				break;
+			
+			case 4: rank = 6;
+				if(this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank())
+				{
+					winner = 2;
+				}
+				else if(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank())
+				{
+					winner = 1;
+				}
+				else
+				{
+					winner = 3;
+				}
+				break;
+			
+			case 5: rank = 5;
+				if(this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank())
+				{
+					winner = 2;
+				}
+				else if(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank())
+				{
+					winner = 1;
+				}
+				else
+				{
+					winner = 3;
+				}
+				break;	
+			
+				
+			case 6: rank = 4; // 3 of a kind
+				if(this_pos == 1 && other_pos == 2)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+							this.cards.get(2).get_rank() < other_hand.get_hand().get(2).get_rank());
+
+				}
+				else if(this_pos == 1 && other_pos == 3)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+							this.cards.get(1).get_rank() < other_hand.get_hand().get(1).get_rank());
+
+				}
+				else if(this_pos == 1 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+							this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+
+				}
+				else if(this_pos == 2 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+							this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+
+				}
+				else if(this_pos == 2 && other_pos == 3)
+				{
+					winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+							this.cards.get(1).get_rank() < other_hand.get_hand().get(1).get_rank());
+
+				}
+				else if(this_pos == 2 && other_pos == 2)
+				{
+					winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+							this.cards.get(2).get_rank() < other_hand.get_hand().get(2).get_rank());
+
+				}
+				else if(this_pos == 3 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+							this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+
+				}
+				else if(this_pos == 3 && other_pos == 2)
+				{
+					winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+							this.cards.get(2).get_rank() < other_hand.get_hand().get(2).get_rank());
+
+				}
+				else // 3 == 3
+				{
+					winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+							this.cards.get(1).get_rank() < other_hand.get_hand().get(1).get_rank());
+				}
+				break;
+				
+			case 7: rank = 3;
+
+				if(this_pos == 1 && other_pos == 2)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+								this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+					if(winner == 3) {
+						winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+								this.cards.get(1).get_rank() < other_hand.get_hand().get(1).get_rank());
+						if(winner == 3)
+						{
+							winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(3).get_rank(), 
+									this.cards.get(2).get_rank() < other_hand.get_hand().get(3).get_rank());
+							if(winner == 3) {
+								winner = this.break_ties_helper(this.cards.get(3).get_rank() > other_hand.get_hand().get(4).get_rank(), 
+										this.cards.get(3).get_rank() < other_hand.get_hand().get(4).get_rank());
+								if(winner == 3)
+								{
+									winner = this.break_ties_helper(this.cards.get(4).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+											this.cards.get(4).get_rank() < other_hand.get_hand().get(2).get_rank());
+								}
+							}
+						}
+					}
+				}
+				
+				else if(this_pos == 1 && other_pos == 3)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+							this.cards.get(0).get_rank() < other_hand.get_hand().get(1).get_rank());
+					
+					if (winner == 3) {
+						winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+								this.cards.get(1).get_rank() < other_hand.get_hand().get(2).get_rank());
+						if(winner == 3)
+						{
+							winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(3).get_rank(), 
+									this.cards.get(2).get_rank() < other_hand.get_hand().get(3).get_rank());
+							if(winner == 3) {
+								winner = this.break_ties_helper(this.cards.get(3).get_rank() > other_hand.get_hand().get(4).get_rank(), 
+										this.cards.get(3).get_rank() < other_hand.get_hand().get(4).get_rank());
+								if(winner == 3)
+								{
+									winner = this.break_ties_helper(this.cards.get(4).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+											this.cards.get(4).get_rank() < other_hand.get_hand().get(0).get_rank());
+								}
+							}
+						}
+					}
+				}
+				
+				
+				else if(this_pos == 1 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+							this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+					
+					if (winner == 3) {
+						winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+								this.cards.get(1).get_rank() < other_hand.get_hand().get(1).get_rank());
+						if(winner == 3)
+						{
+							winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+									this.cards.get(2).get_rank() < other_hand.get_hand().get(2).get_rank());
+							if(winner == 3) {
+								winner = this.break_ties_helper(this.cards.get(3).get_rank() > other_hand.get_hand().get(3).get_rank(), 
+										this.cards.get(3).get_rank() < other_hand.get_hand().get(3).get_rank());
+								if(winner == 3)
+								{
+									winner = this.break_ties_helper(this.cards.get(4).get_rank() > other_hand.get_hand().get(4).get_rank(), 
+											this.cards.get(4).get_rank() < other_hand.get_hand().get(4).get_rank());
+								}
+							}
+						}
+					}
+	
+				}
+				
+				else if(this_pos == 2 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+							this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+					
+					if (winner == 3) {
+						winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+								this.cards.get(1).get_rank() < other_hand.get_hand().get(1).get_rank());
+						if(winner == 3)
+						{
+							winner = this.break_ties_helper(this.cards.get(3).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+									this.cards.get(3).get_rank() < other_hand.get_hand().get(2).get_rank());
+							if(winner == 3) {
+								winner = this.break_ties_helper(this.cards.get(4).get_rank() > other_hand.get_hand().get(3).get_rank(), 
+										this.cards.get(4).get_rank() < other_hand.get_hand().get(3).get_rank());
+								if(winner == 3)
+								{
+									winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(4).get_rank(), 
+											this.cards.get(2).get_rank() < other_hand.get_hand().get(4).get_rank());
+								}
+							}
+						}
+					}
+				}
+				
+
+				else if(this_pos == 2 && other_pos == 3)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+							this.cards.get(0).get_rank() < other_hand.get_hand().get(1).get_rank());
+					
+					if (winner == 3) {
+						winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+								this.cards.get(1).get_rank() < other_hand.get_hand().get(2).get_rank());
+						if(winner == 3)
+						{
+							winner = this.break_ties_helper(this.cards.get(3).get_rank() > other_hand.get_hand().get(3).get_rank(), 
+									this.cards.get(3).get_rank() < other_hand.get_hand().get(3).get_rank());
+							if(winner == 3) {
+								winner = this.break_ties_helper(this.cards.get(4).get_rank() > other_hand.get_hand().get(4).get_rank(), 
+										this.cards.get(4).get_rank() < other_hand.get_hand().get(4).get_rank());
+								if(winner == 3)
+								{
+									winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+											this.cards.get(2).get_rank() < other_hand.get_hand().get(0).get_rank());
+								}
+							}
+						}
+					}
+	
+				}
+
+				
+				else if(this_pos == 2 && other_pos == 2)
+				{
+					winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+							this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+					
+					if (winner == 3) {
+						winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+								this.cards.get(1).get_rank() < other_hand.get_hand().get(1).get_rank());
+						if(winner == 3)
+						{
+							winner = this.break_ties_helper(this.cards.get(3).get_rank() > other_hand.get_hand().get(3).get_rank(), 
+									this.cards.get(3).get_rank() < other_hand.get_hand().get(3).get_rank());
+							if(winner == 3) {
+								winner = this.break_ties_helper(this.cards.get(4).get_rank() > other_hand.get_hand().get(4).get_rank(), 
+										this.cards.get(4).get_rank() < other_hand.get_hand().get(4).get_rank());
+								if(winner == 3)
+								{
+									winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+											this.cards.get(2).get_rank() < other_hand.get_hand().get(2).get_rank());
+								}
+							}
+						}
+					}
+	
+				}
+				
+				
+				else if(this_pos == 3 && other_pos == 1)
+				{
+					winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+							this.cards.get(1).get_rank() < other_hand.get_hand().get(0).get_rank());
+					
+					if (winner == 3) {
+						winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+								this.cards.get(2).get_rank() < other_hand.get_hand().get(1).get_rank());
+						if(winner == 3)
+						{
+							winner = this.break_ties_helper(this.cards.get(3).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+									this.cards.get(3).get_rank() < other_hand.get_hand().get(2).get_rank());
+							if(winner == 3) {
+								winner = this.break_ties_helper(this.cards.get(4).get_rank() > other_hand.get_hand().get(3).get_rank(), 
+										this.cards.get(4).get_rank() < other_hand.get_hand().get(3).get_rank());
+								if(winner == 3)
+								{
+									winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(4).get_rank(), 
+											this.cards.get(0).get_rank() < other_hand.get_hand().get(4).get_rank());
+								}
+							}
+						}
+					}
+				}
+				
+				else if(this_pos == 3 && other_pos == 2)
+				{
+					winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+							this.cards.get(1).get_rank() < other_hand.get_hand().get(0).get_rank());
+					
+					if (winner == 3) {
+						winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+								this.cards.get(2).get_rank() < other_hand.get_hand().get(1).get_rank());
+						if(winner == 3)
+						{
+							winner = this.break_ties_helper(this.cards.get(3).get_rank() > other_hand.get_hand().get(3).get_rank(), 
+									this.cards.get(3).get_rank() < other_hand.get_hand().get(3).get_rank());
+							if(winner == 3) {
+								winner = this.break_ties_helper(this.cards.get(4).get_rank() > other_hand.get_hand().get(4).get_rank(), 
+										this.cards.get(4).get_rank() < other_hand.get_hand().get(4).get_rank());
+								if(winner == 3)
+								{
+									winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+											this.cards.get(0).get_rank() < other_hand.get_hand().get(2).get_rank());
+								}
+							}
+						}
+					}	
+				}
+				
+				else // 3 == 3
+				{
+					winner = this.break_ties_helper(this.cards.get(1).get_rank() > other_hand.get_hand().get(1).get_rank(), 
+							this.cards.get(1).get_rank() < other_hand.get_hand().get(1).get_rank());
+					
+					if (winner == 3) {
+						winner = this.break_ties_helper(this.cards.get(2).get_rank() > other_hand.get_hand().get(2).get_rank(), 
+								this.cards.get(2).get_rank() < other_hand.get_hand().get(2).get_rank());
+						if(winner == 3)
+						{
+							winner = this.break_ties_helper(this.cards.get(3).get_rank() > other_hand.get_hand().get(3).get_rank(), 
+									this.cards.get(3).get_rank() < other_hand.get_hand().get(3).get_rank());
+							if(winner == 3) {
+								winner = this.break_ties_helper(this.cards.get(4).get_rank() > other_hand.get_hand().get(4).get_rank(), 
+										this.cards.get(4).get_rank() < other_hand.get_hand().get(4).get_rank());
+								if(winner == 3)
+								{
+									winner = this.break_ties_helper(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank(), 
+											this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank());
+								}
+							}
+						}
+					}
+					
+					
+				}
+				break;
+			
+			case 8: rank = 2;
+
+			// check for w w x y z         11   12   13   14   22   21   23   24   33   31   32   34   44   41  42  43
+			// check for w x x y z
+			// check for w x y y z
+			// check for w x y z z 
+			
+				winner = 1;
+			
+			
+			
+			
+				break;
+				
+				
+			case 9: rank = 1;
+			
+				for (int i = 0; i < 5; i++) 
+				{
+					if(this.cards.get(0).get_rank() < other_hand.get_hand().get(0).get_rank())
+					{
+						winner = 2;
+					}
+					else if(this.cards.get(0).get_rank() > other_hand.get_hand().get(0).get_rank())
+					{
+						winner = 1;
+					}
+					else
+					{
+						winner = 3;
+					}
+				}
+				break;
+				
+				
+		}
+		
+		return winner;
+	}
+	
+	
+	public Integer break_ties_helper(boolean one, boolean two)
+	{
+		if(one) 
+		{
+			return 1;
+		}
+		else if(two) {
+			return 2;
+		}
+		else { 
+			return 3;
+		}
+	}
+	
+	
+	public Integer compare_hands()
+	{
+		return 0;
+	}
+	
+	public void print_rank()
+	{
+		String rank;
+		this.calculate_rank();
+		
+		Integer rank_ = this.get_rank();
+		
+		if ( rank_ == 1) {
+			rank = "High card";
+		}
+		else if ( rank_ == 2) {
+			rank = "One pair";
+		}
+		else if ( rank_ == 3) {
+			
+			rank = "Two pair";
+		}
+		else if ( rank_ == 4) {
+			rank = "Three of a kind";
+		}
+		else if ( rank_ == 5) {
+			rank = "Straight";
+		}
+		else if ( rank_ == 6) {
+			rank = "Flush";
+		}
+		else if ( rank_ == 7) {
+			rank = "Full house";
+		}
+		else if ( rank_ == 8) {
+			rank = "Four of a kind";
+		}
+		else {
+			rank = "Straight flush";
+		}
+	
+		System.out.println(rank);
+	}
+
+}

@@ -1,0 +1,76 @@
+package PokerSimulation.main;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.print.attribute.standard.MediaSize.Other;
+
+public class Player{
+	
+	private Hand hand = new Hand();
+	private float percent_win = 0;
+	private String player_name;
+	private int Rank;
+	private int games_played;
+	private int games_won;
+	
+	// Accessors and Mutators:
+	
+	public Player(String player) 
+	{
+		this.player_name = player;
+	}
+	
+	public float get_win_percent() 
+	{
+		return this.percent_win;
+	}
+	
+	public String get_name() 
+	{
+	
+		return this.player_name;
+		
+	}
+	
+	public int get_games_played() {
+		return this.games_played;
+	}
+	
+	public int get_games_won() {
+		retun this.games_won;
+	}
+	
+	public int get_rank() {
+		this.hand.calculate_rank();
+		this.Rank = this.hand.get_rank();
+		return this.Rank;
+	}
+	
+	public Hand get_hand()
+	{
+		return this.hand;
+	}
+	
+	public void set_name(String name) 
+	{
+		this.player_name = name;
+	}
+	
+	public void set_hand(Hand hand)
+	{
+		this.hand = hand;
+	}
+	
+	public void set_win(float win_percent)
+	{
+		this.percent_win = win_percent;
+	}
+
+	
+	
+
+	
+}

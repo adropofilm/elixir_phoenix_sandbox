@@ -1,0 +1,110 @@
+package PokerSimulation.main;
+
+public class Card {
+
+	private Integer suite;
+	private Integer rank;
+	
+	public Card(Integer suite, Integer rank) {
+		this.suite = suite;
+		this.rank = rank;
+	}
+
+	
+	// Accessors and Mutators:
+	public Integer get_suite() 
+	{
+		return suite;
+	}
+	
+	public Integer get_rank()
+	{
+		return rank;
+	}
+	
+	
+	public void set_suite(Integer suite)
+	{
+		this.suite = suite;
+	}
+
+	public void set_rank(Integer rank)
+	{
+		this.rank = rank;
+	}
+	
+	public void print_card(int index) 
+	{
+		String suite;
+		String rank;
+		
+		Integer suite_ = this.get_suite();
+		Integer rank_ = this.get_rank();
+		
+		if ( suite_ == 0) {
+			suite = "D";
+		}
+		else if( suite_ == 1 ) {
+			suite = "H";
+		}
+		else if( suite_ == 2 ) {
+			suite = "S";
+		}
+		else {
+			suite = "C";
+		}
+		
+		if ( rank_ == 0) {
+			rank = "2";
+		}
+		else if ( rank_ == 1) {
+			rank = "3";
+		}
+		else if ( rank_ == 2) {
+			
+			rank = "4";
+		}
+		else if ( rank_ == 3) {
+			rank = "5";
+		}
+		else if ( rank_ == 4) {
+			rank = "6";
+		}
+		else if ( rank_ == 5) {
+			rank = "7";
+		}
+		else if ( rank_ == 6) {
+			rank = "8";
+		}
+		else if ( rank_ == 7) {
+			rank = "9";
+		}
+		else if ( rank_ == 8) {
+			rank = "10";
+		}
+		else if ( rank_ == 9) {
+			rank = "J";
+		}
+		else if ( rank_ == 10) {
+			rank = "Q";
+		}
+		else if ( rank_ == 11) {
+			rank = "K";
+		}
+		else {
+			rank = "A";
+		}
+		
+		
+		
+		System.out.println(suite+rank);
+		
+	}
+	
+	// MISC methods:
+	
+	public boolean equals(Card compare_to)
+	{
+		return(this.get_suite() == compare_to.get_suite() && this.get_rank() == compare_to.get_rank());
+	}
+}

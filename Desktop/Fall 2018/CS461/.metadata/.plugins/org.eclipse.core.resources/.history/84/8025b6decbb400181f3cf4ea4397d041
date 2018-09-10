@@ -1,0 +1,116 @@
+package PokerSimulation.main;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class Simulation {
+
+	public void play_game(List<Player> players) {
+		// Initiate variables:
+		Deck deck = new Deck();
+			
+
+					
+		Hand community = new Hand();
+		community.set_hand(deck.deal_cards(5));
+		
+		//Distribute cards:
+		for(Player player: players) {
+			Hand hand = new Hand();
+			hand.set_hand(deck.deal_cards(3));
+			hand.choose_cards(community.get_hand());
+			player.set_hand(hand);
+			player.increment_games_played();
+		}
+		
+		this.calculate_winner(players);
+	}
+	
+	public void calculate_winner(List<Player> players) {
+		
+		Collections.sort(players, new Comparator<Player>() {
+	        @Override public int compare(Player p1, Player p2) {
+	            return p1.get_rank() - p2.get_rank(); 
+	        }
+
+	    });
+		
+		players.get(4).increment_games_won();
+	}
+
+	public List<Player> create_new_players()
+	{
+		
+		List<Player> players = new ArrayList();
+		
+		Player player_one = new Player("Player 1");
+		players.add(player_one);
+		Player player_two = new Player("Player 2");
+		players.add(player_two);
+		Player player_three = new Player("Player 3");
+		players.add(player_three);
+		Player player_four = new Player("Player 4");
+		players.add(player_four);
+		Player player_five = new Player("Player 5");
+		players.add(player_five);
+		
+		return players; 
+	}
+	
+	
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		Simulation setup_players = new Simulation();
+		List<Player> players_twenty = setup_players.create_new_players();
+		List<Player> players_onehuned = setup_players.create_new_players();
+		List<Player> players_twohuned = setup_players.create_new_players();
+		
+		Player winner_twenty = new Player("20 rounds");
+		Player winner_onehuned = new Player("100 rounds");
+		Player winner_twohuned = new Player("200 rounds");
+
+		
+		for( int i = 0; i < 500; i++) 
+		{
+			for(int j = 0; j<20; j++)
+			{
+				Simulation new_game = new Simulation();
+				new_game.play_game(players_twenty);	
+			}
+			
+			//winner_twenty.set_win(players_twenty.get(0).get_win());
+			
+			
+			for(int k = 0; k <100; k++)
+			{
+				Simulation new_game = new Simulation();
+				new_game.play_game(players_onehuned);
+			}
+			winner_onehuned.set_win(players_onehuned.get(0).get_win());
+			
+			for(int l = 0; l < 200; l++)
+			{
+				Simulation new_game = new Simulation();
+				new_game.play_game(players_twohuned);
+			}
+			winner_twohuned.set_win(players_twohuned.get(0).get_win());
+			
+		}
+		
+		double numerator = winner_twenty.get_win_percent() + winner_onehuned.get_win_percent() + winner_onehuned.get_win_percent();
+		double denominator = 3.0;
+		double expected = numerator/denominator;
+		
+		System.out.println("        20 deals: " + winner_twenty.get_win_percent());
+		System.out.println("       100 deals: " + winner_onehuned.get_win_percent());
+		System.out.println("       200 deals: " + winner_twohuned.get_win_percent());
+		System.out.println("_____________________________________");
+		System.out.println("        Expected: " + expected);		
+
+	}
+
+}

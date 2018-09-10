@@ -1,0 +1,97 @@
+package PokerSimulation.main;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class Simulation {
+
+	public void play_game(List<Player> players) {
+		// Initiate variables:
+		Deck deck = new Deck();		
+		Hand community = new Hand();
+		community.set_hand(deck.deal_cards(5));
+		
+		//Distribute cards:
+		for(Player player: players) {
+			Hand hand = new Hand();
+			hand.set_hand(deck.deal_cards(3));
+			hand.choose_cards(community.get_hand());
+			player.set_hand(hand);
+		}
+		this.calculate_winner(players);
+	}
+	
+	public void calculate_winner(List<Player> players) {
+		
+		Collections.sort(players, new Comparator<Player>() {
+	        @Override public int compare(Player p1, Player p2) {
+	            return p1.get_rank() - p2.get_rank(); 
+	        }
+	    });
+		//Distribute cards:
+		for(Player player: players) {
+			player.increment_games_played();
+		}
+		players.get(4).increment_games_won();
+	}
+
+	public List<Player> create_new_players()
+	{
+		
+		List<Player> players = new ArrayList();
+		
+		Player player_one = new Player("Player 1");
+		players.add(player_one);
+		Player player_two = new Player("Player 2");
+		players.add(player_two);
+		Player player_three = new Player("Player 3");
+		players.add(player_three);
+		Player player_four = new Player("Player 4");
+		players.add(player_four);
+		Player player_five = new Player("Player 5");
+		players.add(player_five);
+		
+		return players; 
+	}
+	
+	public void run_iteration(Player winner, List<Player> players, int iterations)
+	{
+		int total_runs = iterations * 500; 
+		for(int i = 0; i<total_runs; i++)
+		{
+			Simulation new_game = new Simulation();
+			new_game.play_game(players);	
+		}
+		winner.set_win(players.get(0).get_win());
+	}
+	
+	public static void main(String[] args) {
+		// Setup players:
+		Simulation setup_players = new Simulation();
+		List<Player> players_twenty = setup_players.create_new_players();
+		List<Player> players_onehuned = setup_players.create_new_players();
+		List<Player> players_twohuned = setup_players.create_new_players();
+		
+		Player winner_twenty = new Player("20 rounds");
+		Player winner_onehuned = new Player("100 rounds");
+		Player winner_twohuned = new Player("200 rounds");
+		
+		// Run iterations:
+		setup_players.run_iteration(winner_twenty, players_twenty, 20);
+		setup_players.run_iteration(winner_onehuned, players_onehuned, 20);
+		setup_players.run_iteration(winner_twohuned, players_twohuned, 20);
+		
+		double expected = (winner_twenty.get_win_percent() + winner_onehuned.get_win_percent() + winner_twohuned.get_win_percent())/3;
+		
+		System.out.println("  Poker Simulation Results:");
+		System.out.println("        20 deals: " + winner_twenty.get_win_percent());
+		System.out.println("       100 deals: " + winner_onehuned.get_win_percent());
+		System.out.println("       200 deals: " + winner_twohuned.get_win_percent());
+		System.out.println("_____________________________________");
+		System.out.println("        Expected: " + expected);		
+
+	}
+
+}
