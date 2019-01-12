@@ -1,7 +1,0 @@
-package PokerSimulation.main;
-
-public class Rank {
-	private int rank;
-	private int position;
-	
-}

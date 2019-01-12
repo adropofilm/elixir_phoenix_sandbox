@@ -1,8 +1,0 @@
-package PokerSimulation.main;
-
-public class Hand {
-
-	private int Rank;
-	private Card cards[] = new Card[5];
-	
-}
