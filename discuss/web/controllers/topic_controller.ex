@@ -3,12 +3,13 @@ defmodule Discuss.TopicController do
   alias Discuss.Topic
 
   def index(conn, _params) do
+    topics = Repo.all(Topic)
 
+    render conn, "index.html", topics: topics
   end
 
   def new(conn, _params) do
     changeset = Topic.changeset(%Topic{}, %{})
-    # when new.html is rendered, pass in changeset as var changeset
     render conn, "new.html", changeset: changeset
   end
 
@@ -16,10 +17,43 @@ defmodule Discuss.TopicController do
     changeset = Topic.changeset(%Topic{}, topic)
 
     case Repo.insert(changeset) do
-      {:ok, post} -> IO.inspect(post)
+      {:ok, _post} ->
+        conn
+        |> put_flash(:info, "Topic Created")
+        |> redirect(to: topic_path(conn, :index))
       {:error, changeset} ->
-        render conn, "new.html", changeset: changeset
+        conn
+        |> render("new.html", changeset: changeset)
     end
+  end
+
+  def edit(conn, %{"id" => topic_id}) do
+    topic = Repo.get(Topic, topic_id)
+    changeset = Topic.changeset(topic)
+    # topic used to generate correct path when we update topic
+    render conn, "edit.html", changeset: changeset, topic: topic
+  end
+
+  def update(conn, %{"id" => topic_id, "topic" => topic}) do
+    old_topic = Repo.get(Topic, topic_id)
+    changeset = Topic.changeset(old_topic, topic)
+
+    case Repo.update(changeset) do
+      {:ok, _topic} ->
+        conn
+        |> put_flash(:info, "Topic Update")
+        |> redirect(to: topic_path(conn, :index))
+      {:error, changeset} ->
+        render conn, "edit.html", changeset: changeset, topic: old_topic
+    end
+  end
+
+  def delete(conn, %{"id" => topic_id}) do
+    topic = Repo.get!(Topic, topic_id) |> Repo.delete!
+
+    conn
+    |> put_flash(:info, "Topic Deleted")
+    |> redirect(to: topic_path(conn, :index))
 
   end
 
